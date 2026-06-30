@@ -109,7 +109,7 @@ const addItemServer = async (video) => {
     fileStore.put(file);
 
     document.querySelector(".playlist").innerHTML += `
-        <div class="playlist-item">
+        <div class="playlist-item" onclick="javascript:openSong('${item.id}')">
             <div class="playlist-start">
                 <img src="./assets/images/play.png" width="50" />
                 <div class="details">

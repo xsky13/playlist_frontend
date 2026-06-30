@@ -4,7 +4,7 @@
     const tx = db.transaction(["song"], "readonly");
     const store = tx.objectStore("song");
 
-    const req = store.getAll();
+    const req = await store.getAll();
 
     req.onsuccess = (e) => {
         let htmlList = '';
@@ -27,6 +27,20 @@
     };
 })();
 
-const openSong = (songId) => {
+const openSong = async (songId) => {
+    const db = await openDatabase();
 
+    const tx = db.transaction(['song', 'file'], "readonly");
+    const fileStore = tx.objectStore("file");
+    const songStore = tx.objectStore("song");
+
+    const req = await fileStore.get(songId);
+    req.onsuccess = (e) => {
+        document.getElementById("audio-player").src = URL.createObjectURL(e.target.result.blob);
+    };
+
+    const songReq = await songStore.get(songId);
+    songReq.onsuccess = (e) => {
+        document.getElementById("player-title").innerHTML = e.target.result.title;
+    };
 }

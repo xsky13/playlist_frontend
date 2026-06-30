@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>My Playlist</title>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <link rel="stylesheet" href="./assets/css/main.css" />
+        <link rel="stylesheet" href="./assets/css/dialog.css" />
+    </head>
+    <body>
+        <div
+            id="global-loader"
+            style="display: none; justify-content: center; align-items: center; height: 100vh; position: fixed; z-index: 3;"
+        >
+            <img
+                src="./assets/images/loader_white.svg"
+                width="100"
+            />
+        </div>
+        <div class="main">
+            <div class="main-header">
+                <h1>Playlist</h1>
+                <button class="button" id="dialog-opener">Add song</button>
+            </div>
+            <div class="playlist">
+                <!--<div class="playlist-item">
+                    <div class="playlist-start">
+                        <img src="./assets/images/play.png" width="50" />
+                        <div class="details">
+                            <h3>Titulo</h3>
+                            <span class="subtitle">10MB</span>
+                        </div>
+                    </div>
+                    <div>
+                        <span class="subtitle">6:53</span>
+                    </div>
+                </div>-->
+            </div>
+        </div>
+        <div id="overlay" class="closed"></div>
+        <div id="dialog" class="closed">
+            <h2>Add song</h2>
+            <div class="tabs">
+                <span class="active" id="openUrl">URL</span>
+                <span id="searchYt">Search youtube</span>
+            </div>
+            <form id="openUrlSection" class="openUrlSection">
+                <input type="text" name="url" placeholder="Video url..." />
+                <button class="button url-button" id="submitUrlBtn">Submit</button>
+            </form>
+            <div id="searchYtSection" class="searchYtSection closed">
+                <div class="search-section-header">
+                    <input type="text" id="searchInput" placeholder="Search..." />
+                    <button class="button url-button" id="searchYtBtn">Search</button>
+                </div>
+                <img src="./assets/images/loader.svg" class="loading-img" width="60" />
+                <div class="search-results" style="display: none">
+                    <!--<div class="playlist-item">
+                        <div class="playlist-start">
+                            <img src="./assets/images/play.png" width="50" />
+                            <div class="details">
+                                <h3>Titulo</h3>
+                                <span class="subtitle">Channel name</span>
+                            </div>
+                        </div>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+        <script src="./assets/js/main.js"></script>
+        <script src="./assets/js/dialog.js"></script>
+    </body>
+</html>

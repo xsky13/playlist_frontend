@@ -10,7 +10,7 @@ const searchYtSection = document.getElementById("searchYtSection");
 
 const globalSpinner = document.getElementById("global-loader");
 const showGlobalSpinner = () =>  globalSpinner.style.display = "flex";
-const hideGlobalSpinner = () =>  globalSpinner.style.display = "none";
+const hideGlobalSpinner = () => globalSpinner.style.display = "none";
 
 const searchResultsDiv = document.getElementsByClassName("search-results")[0];
 
@@ -57,29 +57,54 @@ document.addEventListener('click', e => {
 
 const addItemServer = async (video) => {
     const result = await fetch("http://localhost:8080/extract", {
-        method: "POST"
-    })
-        .then(res => {
-            return res.json();
-        })
-        .catch(err => {
-            console.log(err)
-            alert("Error");
-        })
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ url: video })
+    }).then(res => {
+        return res.json();
+    });
+
+    const response = await fetch(`http://localhost:8080/extract/${result.id}`);
+    const total = result.filesize;
+
+    const reader = response.body.getReader();
+    const chunks = [];
+    let received = 0;
+    while (true) {
+        const { done, value } = await reader.read();
+
+        if (done) break;
+
+        chunks.push(value);
+        received += value.length;
+
+        // const percent = Math.round((received / total) * 100);
+        const percent = Math.round(received / total * 100);
+        document.getElementById("progress").textContent = percent + "%";
+    }
+
+    const blob = new Blob(chunks, { type: "audio/mpeg" });
+
+    hideGlobalSpinner();
+    hideOverlay();
+
+    document.getElementById("progress").textContent = "";
 
     document.querySelector(".playlist").innerHTML += `
-    <div class="playlist-item">
-        <div class="playlist-start">
-            <img src="./assets/images/play.png" width="50" />
-            <div class="details">
-                <h3>${result.newItem.title}</h3>
-                <span class="subtitle">${result.newItem.size}</span>
+        <div class="playlist-item">
+            <div class="playlist-start">
+                <img src="./assets/images/play.png" width="50" />
+                <div class="details">
+                    <h3>${result.title}</h3>
+                    <span class="subtitle">${(received / 1024 / 1024).toFixed(1)}MB</span>
+                </div>
+            </div>
+            <div>
+                <span class="subtitle">${result.duration}</span>
             </div>
         </div>
-        <div>
-            <span class="subtitle">${result.newItem.duration}</span>
-        </div>
-    </div>
     `;
 }
 
@@ -99,9 +124,6 @@ openUrlSection.addEventListener('submit', async e => {
     showGlobalSpinner();
 
     addItemServer("https://www.youtube.com/watch?v=" + videoId);
-
-    hideGlobalSpinner();
-    hideOverlay();
 });
 
 
@@ -144,14 +166,11 @@ performSearchYtButton.addEventListener('click', async e => {
 })
 
 const downloadVideo = async (videoId, title) => {
-    if (confirm(`Quiere agregar ${title}?`)) {
+    if (confirm(`You wanna add ${title}?`)) {
         hideDialog();
         showGlobalSpinner();
 
         addItemServer("https://www.youtube.com/watch?v=" + videoId);
-
-        hideGlobalSpinner();
-        hideOverlay();
     }
 }
 

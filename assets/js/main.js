@@ -55,35 +55,16 @@ document.addEventListener('click', e => {
     }
 })
 
-
-// submit the inputted url
-const openUrlSection = document.getElementById("openUrlSection");
-openUrlSection.addEventListener('submit', async e => {
-    e.preventDefault();
-    const formData = new FormData(e.target);
-    const url = formData.get("url");
-    if (url == "") {
-        alert("Url is empty")
-        return;
-    }
-    const videoId = url.split("=")[1];
-    hideDialog();
-    showGlobalSpinner();
-    // call server
+const addItemServer = async (video) => {
     const result = await fetch("http://localhost:8080/extract", {
         method: "POST"
     })
         .then(res => {
-            // stop loading
-            hideGlobalSpinner();
-            hideOverlay();
             return res.json();
         })
         .catch(err => {
             console.log(err)
-            alert("Error")
-            hideGlobalSpinner();
-            hideOverlay();
+            alert("Error");
         })
 
     document.querySelector(".playlist").innerHTML += `
@@ -100,6 +81,27 @@ openUrlSection.addEventListener('submit', async e => {
         </div>
     </div>
     `;
+}
+
+
+// submit the inputted url
+const openUrlSection = document.getElementById("openUrlSection");
+openUrlSection.addEventListener('submit', async e => {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    const url = formData.get("url");
+    if (url == "") {
+        alert("Url is empty")
+        return;
+    }
+    const videoId = url.split("=")[1];
+    hideDialog();
+    showGlobalSpinner();
+
+    addItemServer("https://www.youtube.com/watch?v=" + videoId);
+
+    hideGlobalSpinner();
+    hideOverlay();
 });
 
 
@@ -141,11 +143,13 @@ performSearchYtButton.addEventListener('click', async e => {
     // alert(searchInput.value)
 })
 
-const downloadVideo = (videoId, title) => {
+const downloadVideo = async (videoId, title) => {
     if (confirm(`Quiere agregar ${title}?`)) {
         hideDialog();
         showGlobalSpinner();
-        // call server
+
+        addItemServer("https://www.youtube.com/watch?v=" + videoId);
+
         hideGlobalSpinner();
         hideOverlay();
     }

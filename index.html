@@ -24,19 +24,16 @@
                 <h1>Playlist</h1>
                 <button class="button" id="dialog-opener">Add song</button>
             </div>
-            <div class="playlist">
-                <!--<div class="playlist-item">
-                    <div class="playlist-start">
-                        <img src="./assets/images/play.png" width="50" />
-                        <div class="details">
-                            <h3>Titulo</h3>
-                            <span class="subtitle">10MB</span>
-                        </div>
-                    </div>
-                    <div>
-                        <span class="subtitle">6:53</span>
-                    </div>
-                </div>-->
+            <div class="player">
+                <h3>Not playing</h3>
+                <audio controls>
+                  <source src="horse.ogg" type="audio/ogg">
+                  <source src="horse.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+                </audio>
+            </div>
+            <div id="playlist" class="playlist">
+                <!-- -->
             </div>
         </div>
         <div id="overlay" class="closed"></div>
@@ -69,7 +66,8 @@
                 </div>
             </div>
         </div>
+        <script src="./assets/js/db.js"></script>
         <script src="./assets/js/main.js"></script>
-        <script src="./assets/js/dialog.js"></script>
+        <script src="./assets/js/load.js"></script>
     </body>
 </html>

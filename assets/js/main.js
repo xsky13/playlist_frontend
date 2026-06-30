@@ -89,8 +89,24 @@ const addItemServer = async (video) => {
 
     hideGlobalSpinner();
     hideOverlay();
-
     document.getElementById("progress").textContent = "";
+
+    const db = await openDatabase();
+    const song = {
+        id: result.id,
+        title: result.title,
+        size: (received / 1024 / 1024).toFixed(1),
+        duration: result.duration
+    }
+    const file = {
+        songId: result.id,
+        blob: blob
+    }
+    const tx = db.transaction(['song', 'file'], "readwrite");
+    const songStore = tx.objectStore('song');
+    songStore.put(song);
+    const fileStore = tx.objectStore('file');
+    fileStore.put(file);
 
     document.querySelector(".playlist").innerHTML += `
         <div class="playlist-item">

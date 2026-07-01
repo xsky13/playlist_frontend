@@ -15,7 +15,7 @@
 }
 
 #dialog {
-    top: 3rem;
+    top: 1rem;
     z-index: 11;
     background-color: white;
     position: absolute;
@@ -26,7 +26,7 @@
 
 @media only screen and (max-width: 670px) {
     #dialog {
-        width: 70%;
+        width: 80%;
     }
 }
 

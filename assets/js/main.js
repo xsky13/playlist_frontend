@@ -171,15 +171,20 @@ performSearchYtButton.addEventListener('click', async e => {
             alert("Error searching youtube or on server")
         })
 
-    searchResult.results.items.forEach(item => {
+    console.log(searchResult)
+
+    searchResult.results.forEach(item => {
         searchResultsDiv.innerHTML += `
-        <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id.videoId}\`, \`${item.snippet.title}\`)">
+        <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id}\`, \`${item.title}\`)">
             <div class="playlist-start search">
-                <img src="${item.snippet.thumbnails.high.url}" class="search-img" width="75" />
+                <img src="${item.thumbnail}" class="search-img" width="75" />
                 <div class="details">
-                    <h3>${item.snippet.title}</h3>
-                    <span class="subtitle">${item.snippet.channelTitle}</span>
+                    <h3>${item.title}</h3>
+                    <span class="subtitle">${item.channel}</span>
                 </div>
+            </div>
+            <div>
+                <span class="subtitle">${item.duration}</span>
             </div>
         </div>
         `;

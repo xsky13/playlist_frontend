@@ -48,6 +48,23 @@ const closeDialog = () => {
     searchResultsDiv.innerHTML = "";
 }
 
+const getVideoId = (input) => {
+    try {
+        const url = new URL(input);
+        if (url.hostname.includes("youtu.be")) {
+            return url.pathname.slice(1);
+        }
+        return url.searchParams.get("v");
+    } catch {
+        return null;
+    }
+};
+
+const escapeHtml = (str) => str.replace(/[&<>"'`]/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;', '`': '&#96;'
+}[c]));
+
+
 document.addEventListener('click', e => {
     // click outside the dialog
     if (e.target != dialogOpener && !(e.target == dialog || dialog.contains(e.target))) {
@@ -64,9 +81,12 @@ const addItemServer = async (video) => {
         body: JSON.stringify({ url: video })
     })
     .then(res => res.json())
-    .catch(_ => alert("Error getting video info"));
+    .catch(_ => alert("Error getting video info"), null);
+    if (!result) return;
 
-    const response = await fetch(`http://localhost:8080/extract/${result.id}`).catch(_ => alert("Error downloading file"));
+    const response = await fetch(`http://localhost:8080/extract/${result.id}`).catch(_ => alert("Error downloading file"), null);
+    if (!response) return;
+
     const total = result.filesize;
 
     const reader = response.body.getReader();
@@ -80,8 +100,7 @@ const addItemServer = async (video) => {
         chunks.push(value);
         received += value.length;
 
-        // const percent = Math.round((received / total) * 100);
-        const percent = Math.round(received / total * 100);
+        const percent = total ? Math.round(received / total * 100) : null;
         document.getElementById("progress").textContent = percent + "%";
     }
 
@@ -114,7 +133,7 @@ const addItemServer = async (video) => {
             <div class="playlist-start">
                 <img src="./assets/images/play.png" style="cursor: pointer;" onclick="javascript:openSong('${result.id}')" width="50" />
                 <div class="details">
-                    <h3>${result.title}</h3>
+                    <h3>${escapeHtml(result.title)}</h3>
                     <span class="subtitle">${(received / 1024 / 1024).toFixed(1)}MB</span>
                 </div>
             </div>
@@ -141,7 +160,11 @@ openUrlSection.addEventListener('submit', async e => {
         alert("Url is empty")
         return;
     }
-    const videoId = url.split("=")[1];
+    const videoId = getVideoId(url);
+    if (!videoId) {
+        alert("Couldn't read a video ID from that URL");
+        return;
+    }
     hideDialog();
     showGlobalSpinner();
 
@@ -168,18 +191,19 @@ performSearchYtButton.addEventListener('click', async e => {
         .catch(_ => {
             searchResultsDiv.style.display = "none";
             loadingImg.classList.remove("loading");
-            alert("Error searching youtube or on server")
+            alert("Error searching youtube or on server");
+            return null;
         })
 
-    console.log(searchResult)
+    if (!searchResult) return;
 
     searchResult.results.forEach(item => {
         searchResultsDiv.innerHTML += `
-        <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id}\`, \`${item.title}\`)">
+        <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id}\`, \`${escapeHtml(item.title)}\`)">
             <div class="playlist-start search">
                 <img src="${item.thumbnail}" class="search-img" width="75" />
                 <div class="details">
-                    <h3>${item.title}</h3>
+                    <h3>${escapeHtml(item.title)}</h3>
                     <span class="subtitle">${item.channel}</span>
                 </div>
             </div>

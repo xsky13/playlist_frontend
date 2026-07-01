@@ -18,10 +18,12 @@
     top: 1rem;
     z-index: 11;
     background-color: white;
-    position: absolute;
+    position: fixed;
     padding: 1rem 1.5rem;
     width: 30rem;
     border-radius: .4rem;
+    max-height: 95vh;
+    overflow-y: scroll;
 }
 
 @media only screen and (max-width: 670px) {

@@ -73,7 +73,7 @@ document.addEventListener('click', e => {
 })
 
 const addItemServer = async (video) => {
-    const result = await fetch("http://localhost:8080/extract", {
+    const result = await fetch("https://playlist-backend-a18f.onrender.com/extract", {
         method: "POST",
         headers: {
             "Content-Type": "application/json"
@@ -84,7 +84,7 @@ const addItemServer = async (video) => {
     .catch(_ => alert("Error getting video info"), null);
     if (!result) return;
 
-    const response = await fetch(`http://localhost:8080/extract/${result.id}`).catch(_ => alert("Error downloading file"), null);
+    const response = await fetch(`https://playlist-backend-a18f.onrender.com/extract/${result.id}`).catch(_ => alert("Error downloading file"), null);
     if (!response) return;
 
     const total = result.filesize;
@@ -181,7 +181,7 @@ performSearchYtButton.addEventListener('click', async e => {
 
     // start loading
     loadingImg.classList.add("loading");
-    const searchResult = await fetch("http://localhost:8080/search?term=" + searchInput.value)
+    const searchResult = await fetch("https://playlist-backend-a18f.onrender.com/search?term=" + searchInput.value)
         .then(res => {
             // stop loading
             searchResultsDiv.style.display = "flex";

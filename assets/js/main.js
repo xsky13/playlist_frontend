@@ -88,6 +88,7 @@ const addItemServer = async (video) => {
     if (!response) return;
 
     const total = result.filesize;
+    document.getElementById("progress").textContent = "Receiving packets...";
 
     const reader = response.body.getReader();
     const chunks = [];
@@ -100,7 +101,7 @@ const addItemServer = async (video) => {
         chunks.push(value);
         received += value.length;
 
-        const percent = total ? Math.round(received / total * 100) : null;
+        // const percent = total ? Math.round(received / total * 100) : null;
         document.getElementById("progress").textContent = percent + "%";
     }
 

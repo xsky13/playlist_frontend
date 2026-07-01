@@ -41,7 +41,13 @@ const openSong = async (songId) => {
 
     const req = fileStore.get(songId);
     req.onsuccess = (e) => {
-        document.getElementById("audio-player").src = URL.createObjectURL(e.target.result.blob);
+        const audio = document.getElementById("audio-player");
+        if (audio.src) URL.revokeObjectURL(audio.src);
+        audio.src = URL.createObjectURL(e.target.result.blob);
+        audio.play();
+        playBtn.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: 2rem; height: 2rem;">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 5.25v13.5m-7.5-13.5v13.5" />
+        </svg>`
     };
 
     const songReq = songStore.get(songId);

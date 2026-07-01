@@ -62,11 +62,11 @@ const addItemServer = async (video) => {
             "Content-Type": "application/json"
         },
         body: JSON.stringify({ url: video })
-    }).then(res => {
-        return res.json();
-    });
+    })
+    .then(res => res.json())
+    .catch(_ => alert("Error getting video info"));
 
-    const response = await fetch(`http://localhost:8080/extract/${result.id}`);
+    const response = await fetch(`http://localhost:8080/extract/${result.id}`).catch(_ => alert("Error downloading file"));
     const total = result.filesize;
 
     const reader = response.body.getReader();
@@ -87,6 +87,7 @@ const addItemServer = async (video) => {
 
     const blob = new Blob(chunks, { type: "audio/mpeg" });
 
+    // ui stuff
     hideGlobalSpinner();
     hideOverlay();
     document.getElementById("progress").textContent = "";
@@ -165,12 +166,12 @@ performSearchYtButton.addEventListener('click', async e => {
             return res.json();
         })
         .catch(_ => {
+            searchResultsDiv.style.display = "none";
             loadingImg.classList.remove("loading");
-            alert("Hubo un error")
+            alert("Error searching youtube or on server")
         })
 
     searchResult.results.items.forEach(item => {
-        console.log(item);
         searchResultsDiv.innerHTML += `
         <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id.videoId}\`, \`${item.snippet.title}\`)">
             <div class="playlist-start search">
@@ -183,7 +184,6 @@ performSearchYtButton.addEventListener('click', async e => {
         </div>
         `;
     });
-    // alert(searchInput.value)
 })
 
 const downloadVideo = async (videoId, title) => {

@@ -87,7 +87,6 @@ const addItemServer = async (video) => {
     // ui stuff
     hideGlobalSpinner();
     hideOverlay();
-    document.getElementById("progress").textContent = "";
 
     document.querySelector(".playlist").innerHTML += `
         <div class="playlist-item" id="${result.id}">
@@ -95,7 +94,7 @@ const addItemServer = async (video) => {
                 <img src="./assets/images/play.png" style="cursor: pointer;" onclick="javascript:openSong('${result.id}')" width="50" />
                 <div class="details">
                     <h3>${escapeHtml(result.title)}</h3>
-                    <span class="subtitle" id="${result.id}-subtitle"></span>
+                    <span class="subtitle" id="${result.id}-subtitle"><img src="./assets/images/loader.svg" class="loading-img" width="25" /></span>
                 </div>
             </div>
             <div>
@@ -119,18 +118,16 @@ const addItemServer = async (video) => {
     let received = 0;
     while (true) {
         const { done, value } = await reader.read();
-
         if (done) break;
 
         chunks.push(value);
         received += value.length;
 
         const percent = total ? Math.min(100, Math.round(received / total * 100)) : null;
-        document.getElementById(`${result.id}-subtitle`).textContent = percent + "%";
-        // document.getElementById("progress").textContent = percent + "%";
+        document.getElementById(`${result.id}-subtitle`).innerHTML = percent + "%";
     }
 
-    document.getElementById(`${result.id}-subtitle`).textContent = `${(received / 1024 / 1024).toFixed(1)}MB`;
+    document.getElementById(`${result.id}-subtitle`).innerHTML = `${(received / 1024 / 1024).toFixed(1)}MB`;
 
     const blob = new Blob(chunks, { type: "audio/mpeg" });
 
@@ -200,8 +197,9 @@ performSearchYtButton.addEventListener('click', async e => {
 
     if (!searchResult) return;
 
+    let htmlList = '';
     searchResult.results.forEach(item => {
-        searchResultsDiv.innerHTML += `
+        htmlList += `
         <div class="playlist-item" onClick="javascript:downloadVideo(\`${item.id}\`, \`${escapeHtml(item.title)}\`)">
             <div class="playlist-start search">
                 <img src="${item.thumbnail}" class="search-img" width="75" />
@@ -216,6 +214,7 @@ performSearchYtButton.addEventListener('click', async e => {
         </div>
         `;
     });
+    searchResultsDiv.innerHTML = htmlList;
 })
 
 const downloadVideo = async (videoId, title) => {
